@@ -3,24 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription - Task Ramadan</title>
-    <link rel="stylesheet" href="style1.css"> 
+    <title>TaskApp - Inscription</title>
+    <link rel="stylesheet" href="style1.css">
 </head>
 <body>
     <div class="auth-container">
-        <h2>Créer un compte</h2>
         <form id="signup-form">
+            <h1>Créer un compte</h1>
+            <p>Rejoins-nous pour gérer tes tâches.</p>
+            
             <div class="input-group">
                 <label for="signup-email">Email</label>
-                <input type="email" id="signup-email" placeholder="Ton email" required>
+                <input type="email" id="signup-email" placeholder="nom@exemple.com" required>
             </div>
+
             <div class="input-group">
                 <label for="signup-password">Mot de passe</label>
-                <input type="password" id="signup-password" placeholder="Mot de passe" required>
+                <input type="password" id="signup-password" placeholder="Minimum 6 caractères" required>
             </div>
+
             <button type="submit" class="btn-primary">S'inscrire</button>
+            <p class="switch-auth">Déjà un compte ? <a href="index.html">Se connecter</a></p>
         </form>
-        <p class="switch-auth">Déjà un compte ? <a href="index.html">Se connecter</a></p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -44,8 +48,7 @@
             if (error) {
                 alert("Erreur : " + error.message);
             } else {
-                // IMPORTANT : Si tu as désactivé la confirmation par email dans Supabase
-                alert("Compte créé avec succès !");
+                alert("Compte créé avec succès ! Tu peux maintenant te connecter.");
                 window.location.href = 'index.html';
             }
         });
