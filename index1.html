@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Dashboard - TaskApp</title>
+    <link rel="stylesheet" href="styleindex.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h2>TaskApp 🚀</h2>
+        <button id="logout-btn">Déconnexion</button>
+    </nav>
+
+    <main class="container">
+        <section class="task-input-section">
+            <input type="text" id="task-input" placeholder="Quelle est la prochaine étape ?">
+            <button id="add-task-btn">Ajouter</button>
+        </section>
+
+        <section class="task-list-container">
+            <ul id="task-list">
+                <li class="task-item">
+                    <input type="checkbox">
+                    <div class="actions">
+                    <span>Apprendre les bases de Supabase</span>
+                        <button class="edit-btn">✏️</button>
+                        <button class="delete-btn">🗑️</button>
+                    </div>
+                </li>
+            </ul>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
