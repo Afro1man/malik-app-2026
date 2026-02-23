@@ -10,19 +10,29 @@
     <div class="auth-container">
         <form id="signup-form">
             <h1>Créer un compte</h1>
-            <p>Rejoins-nous pour gérer tes tâches.</p>
+            <p>Rejoins-nous pour organiser ton Ramadan.</p>
             
             <div class="input-group">
-                <label for="signup-email">Email</label>
-                <input type="email" id="signup-email" placeholder="nom@exemple.com" required>
+                <label>Email</label>
+                <input type="email" id="signup-email" required>
             </div>
 
             <div class="input-group">
-                <label for="signup-password">Mot de passe</label>
-                <input type="password" id="signup-password" placeholder="Minimum 6 caractères" required>
+                <label>Mot de passe</label>
+                <input type="password" id="signup-password" required>
             </div>
 
             <button type="submit" class="btn-primary">S'inscrire</button>
+
+            <div class="separator">OU</div>
+
+            <div class="social-auth">
+                <button type="button" onclick="signInWithGoogle()" class="btn-social google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
+                    S'inscrire avec Google
+                </button>
+            </div>
+
             <p class="switch-auth">Déjà un compte ? <a href="index.html">Se connecter</a></p>
         </form>
     </div>
@@ -33,25 +43,18 @@
         const SUPABASE_KEY = 'sb_publishable_chD1haXweyg1UwDwtSgOSw_XcXuyFZy';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const signupForm = document.getElementById('signup-form');
-
-        signupForm.addEventListener('submit', async (e) => {
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-
-            const { data, error } = await supabaseClient.auth.signUp({
-                email: email,
-                password: password,
+            const { error } = await supabaseClient.auth.signUp({
+                email: document.getElementById('signup-email').value,
+                password: document.getElementById('signup-password').value,
             });
-
-            if (error) {
-                alert("Erreur : " + error.message);
-            } else {
-                alert("Compte créé avec succès ! Tu peux maintenant te connecter.");
-                window.location.href = 'index.html';
-            }
+            if (error) alert(error.message); else alert("Compte créé !");
         });
+
+        async function signInWithGoogle() {
+            await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin }});
+        }
     </script>
 </body>
 </html>
