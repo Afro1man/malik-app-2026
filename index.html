@@ -3,56 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskApp - Connexion</title>
-    <link rel="stylesheet" href="style1.css">
-</head>
+    <title>TaskApp - Inscription</title>
+    <link rel="stylesheet" href="styleindex.css"> </head>
 <body>
     <div class="auth-container">
-        <form id="login-form">
-            <h1>Bon retour !</h1>
-            <p>Gère tes tâches efficacement.</p>
+        <form id="signup-form">
+            <h1>Créer un compte</h1>
+            <p>Rejoins-nous pour gérer tes tâches.</p>
             
             <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="" required>
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" placeholder="" required>
             </div>
 
             <div class="input-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" placeholder="" required>
+                <label for="signup-password">Mot de passe</label>
+                <input type="password" id="signup-password" placeholder="" required>
             </div>
 
-            <button type="submit" class="btn-primary">Se connecter</button>
-            <p class="switch-auth">Pas de compte ? <a href="#">S'inscrire</a></p>
+            <button type="submit" class="btn-primary">S'inscrire</button>
+            <p class="switch-auth">Déjà un compte ? <a href="index.html">Se connecter</a></p>
         </form>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    // Initialisation rapide pour la page login
-    const SUPABASE_URL = 'https://iknjbvzjmsjpygaydaxd.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_chD1haXweyg1UwDwtSgOSw_XcXuyFZy';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script>
+        const SUPABASE_URL = 'https://iknjbvzjmsjpygaydaxd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_chD1haXweyg1UwDwtSgOSw_XcXuyFZy';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
 
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password,
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                alert("Erreur : " + error.message);
+            } else {
+                alert("Inscription réussie ! Tu peux maintenant te connecter.");
+                window.location.href = 'index.html';
+            }
         });
-
-        if (error) {
-            alert("Erreur : " + error.message);
-        } else {
-            // Connexion réussie ! Direction le dashboard
-            window.location.href = 'dashboard.html';
-        }
-    });
-</script>
+    </script>
 </body>
 </html>
-
