@@ -3,26 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskApp - Inscription</title>
-    <link rel="stylesheet" href="style1.css"> </head>
+    <title>TaskApp - Connexion</title>
+    <link rel="stylesheet" href="style1.css">
+</head>
 <body>
     <div class="auth-container">
-        <form id="signup-form">
-            <h1>Créer un compte</h1>
-            <p>Rejoins-nous pour gérer tes tâches.</p>
+        <form id="login-form">
+            <h1>Bon retour !</h1>
+            <p>Gère tes tâches efficacement.</p>
             
             <div class="input-group">
-                <label for="signup-email">Email</label>
-                <input type="email" id="signup-email" placeholder="" required>
+                <label>Email</label>
+                <input type="email" id="email" required>
             </div>
 
             <div class="input-group">
-                <label for="signup-password">Mot de passe</label>
-                <input type="password" id="signup-password" placeholder="" required>
+                <label>Mot de passe</label>
+                <input type="password" id="password" required>
             </div>
 
-            <button type="submit" class="btn-primary">S'inscrire</button>
-            <p class="switch-auth">Déjà un compte ? <a href="signup.html">Se connecter</a></p>
+            <button type="submit" class="btn-primary">Se connecter</button>
+
+            <div class="separator">OU</div>
+
+            <div class="social-auth">
+                <button type="button" onclick="signInWithGoogle()" class="btn-social google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
+                    Continuer avec Google
+                </button>
+                <button type="button" onclick="signInWithFacebook()" class="btn-social facebook">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" width="18">
+                    Continuer avec Facebook
+                </button>
+            </div>
+
+            <p class="switch-auth">Pas de compte ? <a href="signup.html">S'inscrire</a></p>
         </form>
     </div>
 
@@ -32,27 +47,23 @@
         const SUPABASE_KEY = 'sb_publishable_chD1haXweyg1UwDwtSgOSw_XcXuyFZy';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const signupForm = document.getElementById('signup-form');
-
-        signupForm.addEventListener('submit', async (e) => {
+        // Connexion classique
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-
-            const { data, error } = await supabaseClient.auth.signUp({
-                email: email,
-                password: password,
+            const { error } = await supabaseClient.auth.signInWithPassword({
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
             });
-
-            if (error) {
-                alert("Erreur : " + error.message);
-            } else {
-                alert("Inscription réussie ! Tu peux maintenant te connecter.");
-                window.location.href = 'index.html';
-            }
+            if (error) alert(error.message); else window.location.href = 'dashboard.html';
         });
+
+        // Connexion Sociale
+        async function signInWithGoogle() {
+            await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin }});
+        }
+        async function signInWithFacebook() {
+            await supabaseClient.auth.signInWithOAuth({ provider: 'facebook', options: { redirectTo: window.location.origin }});
+        }
     </script>
 </body>
 </html>
-
-
