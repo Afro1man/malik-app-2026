@@ -5,29 +5,52 @@ const SUPABASE_KEY = 'sb_publishable_chD1haXweyg1UwDwtSgOSw_XcXuyFZy';
 // Initialisation du client
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 2. Sélection des éléments HTML (avec vérification pour éviter les erreurs)
+// 2. Sélection des éléments HTML
 const taskInput = document.getElementById('task-input');
 const addTaskBtn = document.getElementById('add-task-btn');
 const taskList = document.getElementById('task-list');
 const logoutBtn = document.getElementById('logout-btn');
 
+// --- NOUVEAU : CHARGEMENT DU PROFIL (NOM + PHOTO) ---
+
+async function loadUserProfile() {
+    const { data: { user }, error } = await supabaseClient.auth.getUser();
+
+    // Si on est sur le dashboard et qu'il n'y a pas d'utilisateur, on redirige
+    if (taskList && (error || !user)) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    if (user) {
+        // Récupération des éléments HTML créés dans le dashboard.html
+        const nameElement = document.getElementById('user-name');
+        const avatarElement = document.getElementById('user-avatar');
+
+        if (nameElement) {
+            nameElement.innerText = user.user_metadata.full_name || "Utilisateur";
+        }
+
+        if (avatarElement && user.user_metadata.avatar_url) {
+            avatarElement.src = user.user_metadata.avatar_url;
+            avatarElement.style.display = "block";
+        }
+    }
+}
+
 // --- FONCTIONS AUTHENTIFICATION ---
 
-// Inscription classique
 async function signUp(email, password) {
     const { data, error } = await supabaseClient.auth.signUp({ email, password });
     if (error) alert("Erreur : " + error.message);
     else alert("Inscription réussie !");
 }
 
-// Connexion classique
 async function signIn(email, password) {
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) alert("Erreur : " + error.message);
     else window.location.href = 'dashboard.html';
 }
-
-// --- NOUVEAU : AUTHENTIFICATION SOCIALE ---
 
 async function signInWithGoogle() {
     const { error } = await supabaseClient.auth.signInWithOAuth({
@@ -45,7 +68,6 @@ async function signInWithFacebook() {
     if (error) alert("Erreur Facebook : " + error.message);
 }
 
-// Déconnexion
 if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
         await supabaseClient.auth.signOut();
@@ -56,15 +78,7 @@ if (logoutBtn) {
 // --- GESTION DES TÂCHES ---
 
 async function fetchTasks() {
-    // Si on n'est pas sur le dashboard (taskList n'existe pas), on s'arrête
     if (!taskList) return;
-
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-
-    if (userError || !user) {
-        console.log("Utilisateur non connecté");
-        return;
-    }
 
     const { data, error } = await supabaseClient
         .from('tasks')
@@ -99,9 +113,12 @@ async function addTask(event) {
     const title = taskInput.value.trim();
     if (!title) return;
 
+    // Récupérer l'id de l'utilisateur pour lier la tâche
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
     const { data, error } = await supabaseClient
         .from('tasks')
-        .insert([{ title: title, is_completed: false }])
+        .insert([{ title: title, is_completed: false, user_id: user.id }])
         .select();
 
     if (error) alert("Erreur d'ajout : " + error.message);
@@ -134,12 +151,15 @@ async function editTask(id, oldTitle) {
     }
 }
 
-// --- ÉCOUTEURS ---
+// --- ÉCOUTEURS ET LANCEMENT ---
+
 if (addTaskBtn) {
     addTaskBtn.addEventListener('click', addTask);
 }
 
-// Lancement automatique si on est sur la page des tâches
+// Lancement automatique au chargement
+loadUserProfile(); // Charge le nom et la photo
+
 if (taskList) {
-    fetchTasks();
+    fetchTasks(); // Charge les tâches
 }
