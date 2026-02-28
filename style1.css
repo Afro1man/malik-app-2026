@@ -135,6 +135,17 @@ input:focus {
     z-index: 100;
 }
 
+.user-block { display: flex; align-items: center; gap: 10px; }
+#user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+#logout-btn { 
+    background: none; 
+    border: 1px solid var(--border); 
+    padding: 5px 12px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-size: 0.85rem;
+}
+
 .container {
     max-width: 700px;
     margin: 2rem auto;
@@ -162,6 +173,24 @@ input:focus {
 .btn-primary:hover, #add-task-btn:hover { 
     background: var(--primary-hover);
     transform: translateY(-1px);
+}
+
+/* --- NOUVEAU : BOUTON SUPPRESSION MULTIPLE --- */
+.btn-danger-outline {
+    background: none;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-danger-outline:hover {
+    background: var(--danger);
+    color: white;
 }
 
 /* --- TASK ITEMS & ANIMATIONS --- */
