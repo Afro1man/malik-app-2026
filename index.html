@@ -50,12 +50,6 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Détecter si l'utilisateur vient de se connecter via OAuth
-supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN') {
-        window.location.href = 'dashboard.html';
-    }
-});
         const SUPABASE_URL = 'https://iknjbvzjmsjpygaydaxd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_chD1haXweyg1UwDwtSgOSw_XcXuyFZy';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -80,8 +74,6 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     </script>
 </body>
 </html>
-
-
 
 
 
