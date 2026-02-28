@@ -295,3 +295,8 @@ li[style*="margin-left"] {
     25% { transform: translateX(-6px); }
     75% { transform: translateX(6px); }
 }
+.task-checkbox:hover {
+    transform: scale(1.1);
+    border-color: var(--primary);
+}
+
