@@ -92,7 +92,54 @@ input:focus { border-color: var(--primary); }
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+/* --- AJOUT DES ANIMATIONS ET EFFETS UX --- */
 
+/* 1. Animation d'entrée fluide */
+@keyframes slideInTask {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.task-item {
+    animation: slideInTask 0.4s ease-out forwards;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 2. Effet de survol dynamique */
+.task-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-color: var(--primary) !important;
+}
+
+/* 3. Style visuel pour les tâches terminées */
+.task-item.completed {
+    background-color: #f1f5f9 !important;
+    opacity: 0.7;
+}
+
+.task-item.completed span {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* 4. Feedback d'erreur (Vibration) */
+.error-shake {
+    animation: shake 0.4s ease-in-out;
+    border: 2px solid var(--danger) !important;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+/* 5. Amélioration visuelle des sous-tâches */
+li[style*="margin-left"] {
+    border-left: 3px solid var(--success) !important;
+    background-color: rgba(16, 185, 129, 0.05) !important;
+}
 .separator::before, .separator::after {
     content: '';
     flex: 1;
@@ -233,5 +280,6 @@ li[style*="margin-left"] {
 }
 
 .actions .delete-btn:hover { background: #fee2e2; }
+
 
 
