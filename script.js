@@ -8,6 +8,7 @@ const taskInput = document.getElementById('task-input');
 const addTaskBtn = document.getElementById('add-task-btn');
 const taskList = document.getElementById('task-list');
 const logoutBtn = document.getElementById('logout-btn');
+const deleteSelectedBtn = document.getElementById('delete-selected-btn');
 
 // --- PROFIL ---
 async function loadUserProfile() {
@@ -66,22 +67,24 @@ async function fetchTasks() {
             const subtasks = children.filter(child => child.parent_id === parent.id);
             subtasks.forEach(sub => displayTask(sub, true));
         });
+
+        // Met à jour la visibilité du bouton de suppression multiple après le rendu
+        updateBulkDeleteButton();
     }
 }
 
 function displayTask(task, isSubTask = false) {
     if (!taskList) return;
     const li = document.createElement('li');
-    
-    // Ajout des classes dynamiques pour le CSS
     li.className = `task-item ${task.is_completed ? 'completed' : ''}`;
     
     if (isSubTask) {
         li.style.marginLeft = "40px";
     }
 
+    // AJOUT : data-id sur la checkbox pour la sélection multiple
     li.innerHTML = `
-        <input type="checkbox" ${task.is_completed ? 'checked' : ''} onchange="toggleTask(${task.id}, this.checked)">
+        <input type="checkbox" class="task-checkbox" data-id="${task.id}" ${task.is_completed ? 'checked' : ''} onchange="toggleTask(${task.id}, this.checked)">
         <span>${task.title}</span>
         <div class="actions">
             ${!isSubTask ? `<button title="Ajouter une sous-tâche" onclick="addSubTask(${task.id})">➕</button>` : ''}
@@ -92,11 +95,12 @@ function displayTask(task, isSubTask = false) {
     taskList.appendChild(li);
 }
 
+// --- ACTIONS UNITAIRES ---
+
 async function addTask(event) {
     if (event) event.preventDefault(); 
     const title = taskInput.value.trim();
 
-    // Feedback d'erreur si vide (Vibration)
     if (!title) {
         taskInput.classList.add('error-shake');
         setTimeout(() => taskInput.classList.remove('error-shake'), 400);
@@ -137,7 +141,6 @@ async function addSubTask(parentId) {
 
 async function deleteTask(id) {
     if (!confirm("Voulez-vous vraiment supprimer cette tâche ?")) return;
-    
     const { error } = await supabaseClient.from('tasks').delete().eq('id', id);
     if (error) alert(error.message);
     else fetchTasks();
@@ -164,12 +167,50 @@ async function editTask(id, oldTitle) {
     }
 }
 
-// --- ÉCOUTEURS ---
+// --- ACTIONS GROUPÉES (BULK DELETE) ---
+
+function updateBulkDeleteButton() {
+    const checkboxes = document.querySelectorAll('.task-checkbox:checked');
+    const bulkSection = document.getElementById('bulk-actions');
+    const countSpan = document.getElementById('selected-count');
+
+    if (bulkSection && countSpan) {
+        if (checkboxes.length > 0) {
+            bulkSection.style.display = 'block';
+            countSpan.innerText = checkboxes.length;
+        } else {
+            bulkSection.style.display = 'none';
+        }
+    }
+}
+
+async function deleteSelectedTasks() {
+    const checkboxes = document.querySelectorAll('.task-checkbox:checked');
+    const idsToDelete = Array.from(checkboxes).map(cb => cb.getAttribute('data-id'));
+
+    if (idsToDelete.length === 0) return;
+
+    if (confirm(`Supprimer les ${idsToDelete.length} tâche(s) sélectionnée(s) ?`)) {
+        const { error } = await supabaseClient
+            .from('tasks')
+            .delete()
+            .in('id', idsToDelete); // Utilisation de .in() pour supprimer la liste d'IDs
+
+        if (error) alert("Erreur : " + error.message);
+        else fetchTasks();
+    }
+}
+
+// --- ÉCOUTEURS & INITIALISATION ---
+
 if (addTaskBtn) {
     addTaskBtn.addEventListener('click', addTask);
 }
 
-// Touche "Entrée" pour ajouter une tâche
+if (deleteSelectedBtn) {
+    deleteSelectedBtn.addEventListener('click', deleteSelectedTasks);
+}
+
 taskInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') addTask();
 });
